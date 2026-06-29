@@ -26,6 +26,7 @@ erDiagram
     GAMES {
         int id PK
         varchar title
+        varchar icon
         varchar thumbnail
         int release_year
         enum rating_age
@@ -34,8 +35,7 @@ erDiagram
         varchar publisher
         varchar developer
         text description
-        int player_count
-        int likes_count
+        json screenshots
         timestamp created_at
         timestamp updated_at
     }
@@ -43,7 +43,6 @@ erDiagram
         int id PK
         varchar name
         text description
-        varchar icon_url
     }
     GAME_DESCRIPTORS {
         int game_id FK
@@ -58,7 +57,8 @@ Menyimpan metadata dasar dari gim yang terdaftar di sistem IGRS.
 | :--- | :--- | :--- | :--- |
 | `id` | `INT` | PK, Auto Increment | ID unik gim. |
 | `title` | `VARCHAR(255)` | Not Null | Judul gim (misal: *Mobile Legends: Bang Bang*). |
-| `thumbnail` | `VARCHAR(255)` | Not Null | URL gambar thumbnail/sampul gim. |
+| `icon` | `VARCHAR(255)` | Not Null | URL gambar ikon gim (biasanya bentuk persegi 1:1). |
+| `thumbnail` | `VARCHAR(255)` | Not Null | URL gambar thumbnail/banner gim (biasanya bentuk lanskap). |
 | `release_year` | `INT` | Not Null | Tahun rilis resmi gim (misal: `2016`). |
 | `rating_age` | `ENUM` | Not Null | Klasifikasi rating usia: `'3+'`, `'7+'`, `'13+'`, `'15+'`, `'18+'`. |
 | `genres` | `JSON` | Not Null | Array string genre gim (misal: `["MOBA", "Strategy", "Action"]`). |
@@ -66,8 +66,7 @@ Menyimpan metadata dasar dari gim yang terdaftar di sistem IGRS.
 | `publisher` | `VARCHAR(100)` | Not Null | Nama perusahaan penerbit gim. |
 | `developer` | `VARCHAR(100)` | Not Null | Nama pengembang gim. |
 | `description` | `TEXT` | Not Null | Deskripsi lengkap mengenai alur dan fitur gim. |
-| `player_count` | `INT` | Default `0` | Jumlah pemain untuk metrik popularitas (ditampilkan dalam format ribuan di UI). |
-| `likes_count` | `INT` | Default `0` | Jumlah suka/like dari pengguna. |
+| `screenshots` | `JSON` | Default `[]` | Array URL gambar tangkapan layar (screenshot) gim. |
 | `created_at` | `TIMESTAMP` | Default `NOW()` | Tanggal data ditambahkan. |
 | `updated_at` | `TIMESTAMP` | Default `NOW()` | Tanggal terakhir data diperbarui. |
 
@@ -79,7 +78,6 @@ Tabel master untuk deskripsi klasifikasi konten sensitif dalam gim berdasarkan s
 | `id` | `INT` | PK, Auto Increment | ID unik deskriptor konten. |
 | `name` | `VARCHAR(100)` | Not Null, Unique | Nama indikator konten (misal: *Violence*, *Drugs*, *Gambling*). |
 | `description` | `TEXT` | Not Null | Penjelasan maksud dari indikator tersebut. |
-| `icon_url` | `VARCHAR(255)` | Not Null | URL ikon representatif untuk indikator konten. |
 
 > [!NOTE]
 > **Daftar Master Deskriptor Konten IGRS:**
@@ -138,66 +136,51 @@ Semua request dan response menggunakan format **JSON**. Basis URL API didefinisi
   {
     "status": "success",
     "message": "Daftar gim berhasil diambil",
-    "pagination": {
-      "current_page": 1,
-      "total_pages": 5,
-      "total_items": 45,
-      "per_page": 10
-    },
+    "total_items": 45,
     "data": [
       {
         "id": 1,
         "title": "Pulau Petualangan Fantasi",
-        "thumbnail": "https://api.igrs.id/uploads/games/pulau-petualangan.jpg",
+        "icon": "https://api.igrs.id/uploads/games/pulau-petualangan-icon.jpg",
         "release_year": 2024,
         "rating_age": "3+",
         "genres": ["Petualangan", "Puzzle"],
-        "player_count": 1200,
-        "likes_count": 340,
         "content_descriptors": [
           {
             "id": 8,
-            "name": "Online Interactions",
-            "icon_url": "https://api.igrs.id/icons/online-interaction.svg"
+            "name": "Online Interactions"
           }
         ]
       },
       {
         "id": 2,
         "title": "Neon Drift Racing",
-        "thumbnail": "https://api.igrs.id/uploads/games/neon-drift.jpg",
+        "icon": "https://api.igrs.id/uploads/games/neon-drift-icon.jpg",
         "release_year": 2023,
         "rating_age": "7+",
         "genres": ["Balapan", "Multiplayer"],
-        "player_count": 8500,
-        "likes_count": 1200,
         "content_descriptors": [
           {
             "id": 8,
-            "name": "Online Interactions",
-            "icon_url": "https://api.igrs.id/icons/online-interaction.svg"
+            "name": "Online Interactions"
           }
         ]
       },
       {
         "id": 3,
         "title": "Legenda Kota Hilang",
-        "thumbnail": "https://api.igrs.id/uploads/games/legenda-kota.jpg",
+        "icon": "https://api.igrs.id/uploads/games/legenda-kota-icon.jpg",
         "release_year": 2025,
         "rating_age": "13+",
         "genres": ["Aksi", "RPG"],
-        "player_count": 45000,
-        "likes_count": 9800,
         "content_descriptors": [
           {
             "id": 1,
-            "name": "Violence",
-            "icon_url": "https://api.igrs.id/icons/violence.svg"
+            "name": "Violence"
           },
           {
             "id": 5,
-            "name": "Language",
-            "icon_url": "https://api.igrs.id/icons/language.svg"
+            "name": "Language"
           }
         ]
       }
@@ -215,16 +198,15 @@ Semua request dan response menggunakan format **JSON**. Basis URL API didefinisi
     "data": {
       "id": 4,
       "title": "Mobile Legends: Bang Bang",
+      "icon": "https://api.igrs.id/uploads/games/mlbb-icon.jpg",
       "thumbnail": "https://api.igrs.id/uploads/games/mlbb-thumbnail.jpg",
       "release_year": 2016,
       "rating_age": "18+",
-      "genres": ["Action", "MOBA", "Strategy"],
+      "genres": ["Aksi", "MOBA", "Strategi"],
       "platforms": ["Android", "iOS"],
       "publisher": "Moonton Games",
       "developer": "Moonton",
-      "description": "Mobile Legends: Bang Bang is one of the most popular mobile Multiplayer Online Battle Arena (MOBA) games worldwide that brings communities together through teamwork and strategy...",
-      "player_count": 150000000,
-      "likes_count": 4820100,
+      "description": "Mobile Legends: Bang Bang adalah salah satu permainan Arena Pertarungan Daring Multipemain (MOBA) seluler paling populer di dunia yang menyatukan komunitas melalui kerja sama tim dan strategi.",
       "screenshots": [
         "https://api.igrs.id/uploads/games/mlbb-ss1.jpg",
         "https://api.igrs.id/uploads/games/mlbb-ss2.jpg",
@@ -234,20 +216,17 @@ Semua request dan response menggunakan format **JSON**. Basis URL API didefinisi
         {
           "id": 1,
           "name": "Violence",
-          "description": "Contains animated combat with fantasy-style effects and combat-oriented gameplay.",
-          "icon_url": "https://api.igrs.id/icons/violence.svg"
+          "description": "Menampilkan aksi pertarungan atau kekerasan."
         },
         {
           "id": 8,
-          "name": "Online Interaction",
-          "description": "Features real-time voice and text chat between players during matches.",
-          "icon_url": "https://api.igrs.id/icons/online-interaction.svg"
+          "name": "Online Interactions",
+          "description": "Pemain dapat berinteraksi dengan orang lain secara online."
         },
         {
           "id": 9,
-          "name": "Character Visuals",
-          "description": "Hero skins and designs emphasize heroic and stylized fantasy archetypes.",
-          "icon_url": "https://api.igrs.id/icons/character-appearance.svg"
+          "name": "Character Appearance",
+          "description": "Mengandung kostum atau penampilan karakter tertentu."
         }
       ],
       "created_at": "2026-01-10T08:30:00Z",
@@ -256,48 +235,20 @@ Semua request dan response menggunakan format **JSON**. Basis URL API didefinisi
   }
   ```
 
-#### 3. Membuat Data Gim Baru (Admin Only)
-* **Endpoint:** `POST /games`
-* **Headers:** `Authorization: Bearer <token>`
-* **Contoh Request Body:**
-  ```json
-  {
-    "title": "Game Petualangan Baru",
-    "thumbnail": "https://api.igrs.id/uploads/games/new-adv.jpg",
-    "release_year": 2026,
-    "rating_age": "13+",
-    "genres": ["Adventure", "RPG"],
-    "platforms": ["Android"],
-    "publisher": "Studio Lokal Indonesia",
-    "developer": "Dev Lokal",
-    "description": "Jelajahi dunia misterius nusantara dalam gim RPG terbaru.",
-    "player_count": 0,
-    "likes_count": 0,
-    "screenshots": [
-      "https://api.igrs.id/uploads/games/new-ss1.jpg"
-    ],
-    "descriptors": [1, 8]
-  }
-  ```
-* **Contoh Response (Created - `201 Created`):**
-  ```json
-  {
-    "status": "success",
-    "message": "Data gim baru berhasil disimpan",
-    "data": {
-      "id": 5
-    }
-  }
-  ```
-
-#### 4. Menghapus Data Gim (Admin Only)
-* **Endpoint:** `DELETE /games/:id`
-* **Headers:** `Authorization: Bearer <token>`
+#### 3. Mendapatkan Rekap Jumlah Gim Berdasarkan Rating
+* **Endpoint:** `GET /games/summary/ratings`
 * **Contoh Response (Success - `200 OK`):**
   ```json
   {
     "status": "success",
-    "message": "Data gim dengan ID 5 berhasil dihapus"
+    "message": "Rekapitulasi jumlah gim berdasarkan rating berhasil diambil",
+    "data": [
+      { "rating_age": "3+", "total_games": 856 },
+      { "rating_age": "7+", "total_games": 1032 },
+      { "rating_age": "13+", "total_games": 768 },
+      { "rating_age": "15+", "total_games": 534 },
+      { "rating_age": "18+", "total_games": 412 }
+    ]
   }
   ```
 
@@ -366,31 +317,6 @@ Semua request dan response menggunakan format **JSON**. Basis URL API didefinisi
       "published_at": "2025-10-01T00:00:00Z",
       "created_at": "2025-10-01T00:00:00Z",
       "updated_at": "2025-10-01T00:00:00Z"
-    }
-  }
-  ```
-
-#### 3. Membuat Artikel Baru (Admin Only)
-* **Endpoint:** `POST /blogs`
-* **Headers:** `Authorization: Bearer <token>`
-* **Contoh Request Body:**
-  ```json
-  {
-    "title": "Sosialisasi Klasifikasi Gim Terbaru 2026",
-    "banner_image": "https://api.igrs.id/uploads/blogs/sosialisasi-2026.jpg",
-    "category": "Berita",
-    "content": "Pemerintah bersama IGRS mengadakan sosialisasi klasifikasi gim secara berkala...",
-    "tags": ["IGRS", "Sosialisasi"],
-    "published_at": "2026-06-28T14:00:00Z"
-  }
-  ```
-* **Contoh Response (Created - `201 Created`):**
-  ```json
-  {
-    "status": "success",
-    "message": "Artikel baru berhasil dipublikasikan",
-    "data": {
-      "id": 105
     }
   }
   ```
