@@ -329,10 +329,7 @@ API menggunakan kode status HTTP standar untuk menunjukkan keberhasilan atau keg
 
 | HTTP Status Code | Deskripsi | Skenario Kasus |
 | :--- | :--- | :--- |
-| `200 OK` | Request Berhasil | Mendapatkan data, memperbarui data, menghapus data. |
-| `201 Created` | Resource Baru Terbuat | Berhasil menambahkan gim atau artikel baru. |
-| `400 Bad Request` | Validasi Payload Gagal | Ada parameter wajib yang kurang atau format payload salah. |
-| `401 Unauthorized` | Autentikasi Diperlukan | Token admin tidak dikirim atau tidak valid pada endpoint terproteksi. |
+| `200 OK` | Request Berhasil | Mendapatkan daftar data atau detail entitas spesifik. |
 | `404 Not Found` | Data Tidak Ditemukan | ID gim atau ID artikel yang diminta tidak eksis di database. |
 | `500 Internal Server Error` | Gangguan Server | Terjadi kegagalan koneksi database atau error server internal lainnya. |
 
@@ -344,14 +341,10 @@ API menggunakan kode status HTTP standar untuk menunjukkan keberhasilan atau keg
 }
 ```
 
-#### Contoh Payload Error (`400 Bad Request`):
+#### Contoh Payload Error (`500 Internal Server Error`):
 ```json
 {
   "status": "fail",
-  "message": "Validasi gagal",
-  "errors": {
-    "title": "Judul gim wajib diisi",
-    "rating_age": "Rating usia harus bernilai '3+', '7+', '13+', '15+', atau '18+'"
-  }
+  "message": "Terjadi kesalahan pada server saat mengambil daftar gim"
 }
 ```
