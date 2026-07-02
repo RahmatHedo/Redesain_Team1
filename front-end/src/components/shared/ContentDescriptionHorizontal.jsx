@@ -1,13 +1,30 @@
-// components/ContentDescriptionHorizontal.jsx
-function ContentDescriptionHorizontal() {
+
+
+function ContentDescriptionHorizontal({ data }) {
+  if (!data) return null;
+
+  const { name, description, icon, textColor } = data;
+
   return (
-    <div className="flex flex-row w-fit items-start gap-3 p-3 rounded-lg bg-bgiconpurple last:border-b-0">
-      <div className="flex items-center gap-2">
-        <img src="" alt="" className="w-6 h-6 mt-0.5" />
+    <div className="flex flex-row w-full items-center gap-4 p-4 rounded-2xl bg-white shadow-xs border border-gray-50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 h-full">
+      
+      {/* Icon (No background, smaller size) */}
+      <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center">
+        <img 
+          src={icon} 
+          alt={name} 
+          className="w-10 h-10 object-contain" 
+        />
       </div>
-      <div className="flex flex-col gap-1">
-        <h4 className="font-semibold text-gray-800 text-sm">Content Description</h4>
-        <p className="text-xs text-gray-600">This is a simple content description component.</p>
+
+      {/* Text Content */}
+      <div className="flex flex-col gap-0.5">
+        <h4 className={`font-bold text-sm tracking-wide ${textColor || 'text-gray-800'}`}>
+          {name}
+        </h4>
+        <p className="text-[11px] text-gray-500 font-medium leading-relaxed">
+          {description}
+        </p>
       </div>
     </div>
   );

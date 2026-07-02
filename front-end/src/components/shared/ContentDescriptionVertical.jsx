@@ -1,13 +1,30 @@
-// components/ContentDescriptionVertical.jsx
-function ContentDescriptionVertical() {
+
+
+function ContentDescriptionVertical({ data }) {
+  if (!data) return null;
+
+  const { name, description, icon, textColor } = data;
+
   return (
-    <div className="flex flex-col w-fit items-center text-center gap-3 p-3 rounded-lg bg-bgiconpurple last:border-b-0">
-      <div className="flex  gap-2">
-        <img src="" alt="" className="w-6 h-6 mt-0.5" />
+    <div className="flex flex-col items-center text-center p-4 pb-5 rounded-2xl bg-white border border-gray-50 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 w-full h-full min-h-[160px] justify-center">
+      
+      {/* Icon (No background, smaller size) */}
+      <div className="flex items-center justify-center w-12 h-12 mb-2">
+        <img 
+          src={icon} 
+          alt={name} 
+          className="w-10 h-10 object-contain hover:scale-108 transition-transform duration-300" 
+        />
       </div>
-      <div className="flex flex-col gap-1">
-        <h4 className="font-semibold text-gray-800 text-sm">Content Description</h4>
-        <p className="text-xs text-gray-600">This is a simple content description component.</p>
+
+      {/* Text Content */}
+      <div className="flex flex-col gap-1 mt-1">
+        <h4 className={`font-bold text-sm tracking-wide ${textColor || 'text-gray-800'}`}>
+          {name}
+        </h4>
+        <p className="text-[11px] text-gray-500 font-medium leading-relaxed max-w-[180px]">
+          {description}
+        </p>
       </div>
     </div>
   );

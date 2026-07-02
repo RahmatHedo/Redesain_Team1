@@ -17,9 +17,9 @@ function AppRoutes() {
 
             <Route path="/" element={<Home />} />
             <Route path="/games" element={<Game />} />
-            <Route path="/games/:id" element={<GameDetail />} />
+            <Route path="/gamesdet" element={<GameDetail />} />
             <Route path="/information-rating" element={<InformationRating />} />
-            <Route path="/blog-detail" element={<BlogDetail />} />
+            <Route path="/blog-detail:id" element={<BlogDetail />} />
             <Route path="/about" element={<About />} />
 
         </Route>
