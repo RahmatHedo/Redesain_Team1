@@ -91,6 +91,52 @@ const insertInitialDataQuery = `
     (4, 8),
     (4, 9)
   ON CONFLICT (game_id, descriptor_id) DO NOTHING;
+
+  -- Insert dummy blogs
+  INSERT INTO blogs (id, title, banner_image, category, content, tags, published_at)
+  VALUES
+    (1, 'Evaluasi dan Penangguhan Sementara Layanan Klasifikasi Gim / IGRS', 'https://qqkucewbprvhvlxpfxny.supabase.co/storage/v1/object/public/game-assets/thumbnails-blog/thm-artikel1.png', 'Pengumuman Penting', 'Jakarta — Indonesia Game Rating System (IGRS) saat ini tengah menjalani proses evaluasi menyeluruh yang mencakup aspek tata kelola, sistem, dan proses bisnis layanan. Langkah ini merupakan upaya IGRS dalam menghadirkan layanan klasifikasi Gim yang andal, akuntabel, dan mudah dimanfaatkan oleh Penerbit Gim maupun masyarakat.
+
+Selama proses evaluasi berlangsung, layanan klasifikasi gim IGRS untuk sementara waktu ditangguhkan sementara. Keputusan ini diambil agar seluruh tahapan perbaikan dapat diselesaikan dengan baik, sehingga sistem dan proses bisnis yang hadir nantinya benar-benar siap dan lebih baik dari sebelumnya.
+
+Perlu diketahui bahwa selama periode penangguhan ini seluruh Penerbit Gim maupun platform distribusi dikecualikan dari pengenaan sanksi administratif akibat tidak melakukan klasifikasi Gim maupun menampilkan klasifikasi IGRS sebagaimana diatur dalam Peraturan Menteri Komunikasi dan Informatika Nomor 2 Tahun 2024 tentang Klasifikasi Gim. Kebijakan ini berlaku hingga Kementerian Komunikasi dan Digital RI menerbitkan pemberitahuan resmi bahwa layanan telah kembali beroperasi penuh.
+
+Kami mengucapkan terima kasih kepada seluruh Penerbit Gim, Platform Distribusi, dan pemangku kepentingan terkait lainnya atas perhatian dan kerja sama yang baik selama proses evaluasi ini berlangsung.
+
+Untuk informasi lebih lanjut, hubungi kami melalui:
+
+Website: www.igrs.id/contact-us
+Email: helpdesk@igrs.id', '["Pengumuman Penting"]'::jsonb, '2026-06-18 00:00:00'),
+    (2, 'MAKLUMAT PELAYANAN', 'https://qqkucewbprvhvlxpfxny.supabase.co/storage/v1/object/public/game-assets/thumbnails-blog/thm-artikel2.jpg', 'Berita', '1. Direktorat Pengembangan Ekosistem Digital berkomitmen untuk menerapkan dan meningkatkan pelayanan dengan cara melayani dengan proaktif yaitu profesional, akuntabel, integritas, inovatif dalam rangka memberikan hasil yang maksimal dan terbaik kepada pemohon.
+2. Direktorat Pengembangan Ekosistem Digital tidak mengenal KKN, karena pelayanan diutamakan kepada melayani dengan hati, tanpa gratifikasi, korupsi, dan pungli.
+3. Direktorat Pengembangan Ekosistem Digital berkomitmen untuk menerbitkan Sertifikat Hasil Klasifikasi Gim maksimal 7 x 24 jam secara otomatis melalui sistem pendaftaran.
+4. Direktorat Pengembangan Ekosistem Digital selalu terbuka untuk menerima saran serta masukan dari publik melalui kanal aduan pada website IGRS (https://igrs.id) dalam rangka perbaikan dan peningkatan pelayanan dalam layanan Klasifikasi Gim IGRS.
+5. Direktorat Pengembangan Ekosistem Digital berkomitmen untuk selalu memberikan kemudahan kepada pemohon dengan tersedianya layanan Helpdesk via WhatsApp di nomor (+62 811-806-860), email (igrs@komdigi.go.id), serta kanal aduan pada website (https://igrs.id) yang aktif dari hari Senin s.d. Jumat pukul 08.00 — 16.00 WIB (kecuali hari libur nasional).
+6. Direktorat Pengembangan Ekosistem Digital berkomitmen untuk selalu mengutamakan solusi terhadap permasalahan terkait Klasifikasi Gim.
+
+Plt. Direktur Pengembangan Ekosistem Digital
+
+Sonny Hendra Sudaryana', '[]'::jsonb, '2025-10-24 00:00:00'),
+    (3, 'Pemberitahuan Terkait Proses Verifikasi IGRS', 'https://qqkucewbprvhvlxpfxny.supabase.co/storage/v1/object/public/game-assets/thumbnails-blog/thm-artikel3.png', 'Pengumuman Penting', 'Sehubungan dengan meningkatnya jumlah pengajuan klasifikasi Gim, dapat kami sampaikan beberapa hal sebagai berikut:
+
+1. Indonesia Game Rating System (IGRS) saat ini tengah melakukan penyesuaian pengelolaan proses verifikasi guna menjaga akurasi serta menjamin kepastian pemberian layanan.
+2. Dalam masa penyesuaian tersebut, proses verifikasi terhadap sebagian Gim dapat memerlukan waktu tambahan.
+3. Penerbit Gim yang telah melakukan klasifikasi gim secara mandiri (self-assessment) melalui sistem IGRS, tetap akan diproses sesuai ketentuan peraturan perundang-undangan.
+4. IGRS berkomitmen untuk terus mengoptimalkan layanan dan memastikan keberlanjutan proses klasifikasi Gim secara bertanggung jawab.
+
+Demikian pemberitahuan ini kami sampaikan. Atas perhatian dan kerja sama yang baik, kami ucapkan terima kasih.
+
+Sonny Hendra Sudaryana - Plt. Direktur Pengembangan Ekosistem Digital', '["Pengumuman Penting"]'::jsonb, '2026-02-02 00:00:00')
+  ON CONFLICT (id) DO UPDATE SET 
+    banner_image = EXCLUDED.banner_image,
+    category = EXCLUDED.category,
+    title = EXCLUDED.title,
+    content = EXCLUDED.content,
+    tags = EXCLUDED.tags,
+    published_at = EXCLUDED.published_at;
+
+  -- Resync sequence for blogs just in case
+  SELECT setval('blogs_id_seq', (SELECT MAX(id) FROM blogs));
 `;
 
 async function runMigration() {

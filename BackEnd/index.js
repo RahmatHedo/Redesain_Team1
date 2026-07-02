@@ -16,7 +16,9 @@ app.get('/', (req, res) => {
 
 // Import Routes
 const gamesRoutes = require('./routes/games');
+const blogsRoutes = require('./routes/blogs');
 app.use('/api/v1/games', gamesRoutes);
+app.use('/api/v1/blogs', blogsRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
