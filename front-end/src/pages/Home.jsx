@@ -1,20 +1,19 @@
-import HeroSection from "../components/home/HeroSection";
-import AnnouncementCard from "../components/shared/AnnouncementCard";
-import ContentDescriptionHorizontal from "../components/shared/ContentDescriptionHorizontal";
-import ContentDescriptionVertical from "../components/shared/ContentDescriptionVertical";
-import GameAboutCard from "../components/shared/GameAboutCard";
-import GameCard from "../components/shared/GameCard";
-import RatingAge from "../components/shared/RatingAge";
+import HeroSection from '../components/home/HeroSection';
+import RatingSection from '../components/home/RatingSection';
+import PopularGamesSection from '../components/home/PopularGamesSection';
+import ContentSection from '../components/home/ContentSection';
+import AnnouncementSection from '../components/home/AnnouncementSection';
 
 function Home() {
   return (
-    <div>
-      <h1>Home Page</h1>
-      <HeroSection/>
-
-      <GameAboutCard/>
+    <div className="bg-[#F9F9FF] min-h-screen">
+      <HeroSection />
+      <RatingSection />
+      <PopularGamesSection />
+      <ContentSection />
+      <AnnouncementSection />
     </div>
   );
 }
 
-export default Home;
+export default Home;
